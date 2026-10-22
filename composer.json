@@ -1,0 +1,43 @@
+{
+  "name": "sunnysideup/ai-llm-connector",
+  "description": "Sets up a unified way to connect to google, anthropic, and the not so nice chatgpt",
+  "type": "silverstripe-vendormodule",
+  "keywords": [
+    "ai",
+    "llm",
+    "anthropic",
+    "chatgpt",
+    "gemini",
+    "connector",
+    "keep it simple"
+  ],
+  "license": "BSD-3-Clause",
+  "require": {
+    "silverstripe/framework": "^6.0",
+    "silverstripe/admin": "^3.0"
+  },
+  "require-dev": {},
+  "autoload": {
+    "psr-4": {
+      "Sunnysideup\\AiLlmConnector\\": "src/"
+    }
+  },
+  "extra": {
+    "expose": [
+      "client/dist"
+    ]
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "bin": [
+    "bin/sake-npm-build-ai-llm-connector.sh",
+    "bin/sake-npm-watch-ai-llm-connector.sh"
+  ],
+  "authors": [
+    {
+      "name": "Nicolaas Thiemen Francken",
+      "email": "modules@sunnysideup.co.nz",
+      "role": "lead developer"
+    }
+  ]
+}
