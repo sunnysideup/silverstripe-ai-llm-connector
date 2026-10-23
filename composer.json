@@ -17,6 +17,11 @@
     "silverstripe/admin": "^2.0"
   },
   "require-dev": {},
+  "suggest": {
+    "openai-php/client": "Required for the OpenAI connector",
+    "mozex/anthropic-php": "Required for the Claude connector",
+    "google-gemini-php/client": "Required for the Gemini connector"
+  },
   "autoload": {
     "psr-4": {
       "Sunnysideup\\AiLlmConnector\\": "src/"

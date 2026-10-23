@@ -105,15 +105,17 @@ Sunnysideup\AiLlmConnector\Api\ConnectorBaseClass:
 
 ### Order of precedence
 
-**API key:** SiteConfig `LLMKey` > `SS_LLM_CLIENT_API_KEY` > `SS_LLM_CLIENT_API_KEY_{SHORTNAME}`
+For client, model and API key the order is the same (highest first):
+**environment > YML > SiteConfig (database) > default**.
+Within one layer, the connector specific setting beats the generic one.
 
-**Model:** method argument > SiteConfig `LLMModel` > `SS_LLM_CLIENT_MODEL` > `SS_LLM_CLIENT_MODEL_{SHORTNAME}` >
-YML `client_model` > YML `client_model_{shortname}` > connector default
+**Client:** argument to `inst()` / `ask()` > `SS_LLM_CLIENT_NAME` > YML `client_name` > SiteConfig `LLMClient` > `TestConnector`.
 
-**Client:** argument to `inst()` / `ask()` > `SS_LLM_CLIENT_NAME` > YML `client_name` > `TestConnector`.
+**Model:** method argument > `SS_LLM_CLIENT_MODEL_{SHORTNAME}` > `SS_LLM_CLIENT_MODEL` >
+YML `client_model_{shortname}` > YML `client_model` > SiteConfig `LLMModel` > connector default
 
-> Note: when no client is passed in, the `SS_LLM_CLIENT_NAME` / `client_name` settings are used.
-> The SiteConfig `LLMClient` value is currently not consulted by `inst()`.
+**API key:** `SS_LLM_CLIENT_API_KEY_{SHORTNAME}` > `SS_LLM_CLIENT_API_KEY` > SiteConfig `LLMKey`
+(no YML option, keep secrets out of config files).
 
 If no valid client can be found, the `TestConnector` is used. It never calls an API
 and always returns a fixed sentence, which makes it safe for development.
@@ -209,13 +211,11 @@ Helpers available to subclasses: `getApiKey()`, `getModel()`, `getTemperature()`
 ## CMS settings (SiteConfig)
 
 The module adds three fields to `SiteConfig` (tab **LLM**): `LLMClient`, `LLMModel` and `LLMKey`.
-`LLMKey` and `LLMModel` take precedence over environment settings.
 A link to the test task is shown on the same tab.
 
-A field is shown as **read-only** (with an explanation) if its value is overruled by the environment or YML config.
-Right now that applies to `LLMClient` when `SS_LLM_CLIENT_NAME` or the YML `client_name` is set.
-`LLMModel` and `LLMKey` are not overruled (SiteConfig wins), so they stay editable.
-Use `ConnectorBaseClass::get_overruled_by('LLMClient')` to check this in your own code
+A field is shown as **read-only** (with an explanation of what overrules it) if its value
+comes from the environment or YML config rather than from the SiteConfig.
+Use `ConnectorBaseClass::get_overruled_by('LLMClient')` (or `LLMModel` / `LLMKey`) to check this in your own code
 (returns a description of what overrules the field, or `''`).
 
 ## Testing your setup
