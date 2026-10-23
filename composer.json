@@ -29,10 +29,6 @@
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "bin": [
-    "bin/sake-npm-build-ai-llm-connector.sh",
-    "bin/sake-npm-watch-ai-llm-connector.sh"
-  ],
   "authors": [
     {
       "name": "Nicolaas Thiemen Francken",

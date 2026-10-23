@@ -1,1 +1,6 @@
-# see https://docs.silverstripe.org/en/developer_guides/configuration/configuration/
+---
+Name: ai-llm-connector
+---
+SilverStripe\SiteConfig\SiteConfig:
+  extensions:
+    - Sunnysideup\AiLlmConnector\Extensions\SiteConfigExtensionForAiLlmConnector
