@@ -330,10 +330,8 @@ abstract class ConnectorBaseClass
             return 'No valid key set';
         }
 
-        $start = substr((string) $input, 0, 5);
-        $end = substr((string) $input, -5);
-
-        return $start . '********' . $end;
+        // only show the last four characters - enough to recognise a key, not enough to leak it
+        return '********' . substr((string) $input, -4);
     }
 
     /**

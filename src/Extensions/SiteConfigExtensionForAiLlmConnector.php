@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Sunnysideup\AiLlmConnector\Extensions;
 
+use SilverStripe\Core\Convert;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HTMLReadonlyField;
+use SilverStripe\Forms\PasswordField;
 use SilverStripe\Forms\TextField;
 use Sunnysideup\AiLlmConnector\Api\ConnectorBaseClass;
 
@@ -22,6 +24,21 @@ class SiteConfigExtensionForAiLlmConnector extends Extension
         'LLMModel' => 'Varchar(50)',
         'LLMKey' => 'Text',
     ];
+
+    /**
+     * The key field is never filled in with the stored value,
+     * so a blank value means: keep the existing key.
+     */
+    public function onBeforeWrite()
+    {
+        $owner = $this->getOwner();
+        if ($owner->isInDB() && $owner->isChanged('LLMKey') && trim((string) $owner->LLMKey) === '') {
+            $before = $owner->getChangedFields()['LLMKey']['before'] ?? null;
+            if (is_string($before) && $before !== '') {
+                $owner->LLMKey = $before;
+            }
+        }
+    }
 
     public function updateCMSFields(FieldList $fields)
     {
@@ -61,15 +78,17 @@ class SiteConfigExtensionForAiLlmConnector extends Extension
                     ->setDescription('
                         e.g. gpt-3.5-turbo, gpt-4, claude-2, gemini-2.5-flash, just leave blank for default.
                         <br />
-                        <br />Right now, the selected model is: ' . (ConnectorBaseClass::inst()->getModelNice() ?: '--not set ---')),
-                TextField::create('LLMKey', 'LLM Key ')
+                        <br />Right now, the selected model is: ' . Convert::raw2xml(ConnectorBaseClass::inst()->getModelNice() ?: '--not set ---')),
+                PasswordField::create('LLMKey', 'LLM Key ')
                     ->setDescription('e.g. sk-1234
+                    <br />Leave blank to keep the current key. The saved key is never shown again.
+                    <br />Preferably set the key using the environment variable SS_LLM_CLIENT_API_KEY (or SS_LLM_CLIENT_API_KEY_{SHORTNAME}) instead of storing it in the database.
                     <br />
                     <br />You can get your key from your LLM provider.
                     <br />For OpenAI, you can get it from <a href="https://platform.openai.com/account/api-keys" target="_blank">here</a>.
                     <br />For Anthropic, you can get it from <a href="https://console.anthropic.com/keys" target="_blank">here</a>.
                     <br />For Google Gemini, you can get it from <a href="https://aistudio.google.com/apikey" target="_blank">here</a>.
-                    <br />Right now, the entered key is: ' . (ConnectorBaseClass::inst()->getApiKeyNice() ?: '--not set ---')),
+                    <br />Right now, the entered key is: ' . Convert::raw2xml(ConnectorBaseClass::inst()->getApiKeyNice() ?: '--not set ---')),
                 HTMLReadonlyField::create(
                     'TestYourLLM',
                     'Test your LLM',
